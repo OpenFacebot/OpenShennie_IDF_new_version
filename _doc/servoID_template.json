@@ -1,0 +1,184 @@
+{
+    "01": {
+        "name_cn": "右内眉",
+        "name_en": "BrowInner_Right",
+        "angle_min": null,
+        "angle_max": null,
+        "angle_neutral": null
+    },
+    "02": {
+        "name_cn": "左内眉",
+        "name_en": "BrowInner_Left",
+        "angle_min": null,
+        "angle_max": null,
+        "angle_neutral": null
+    },
+    "03": {
+        "name_cn": "右外眉",
+        "name_en": "BrowOuter_Right",
+        "angle_min": null,
+        "angle_max": null,
+        "angle_neutral": null
+    },
+    "04": {
+        "name_cn": "左外眉",
+        "name_en": "BrowOuter_Left",
+        "angle_min": null,
+        "angle_max": null,
+        "angle_neutral": null
+    },
+    "05": {
+        "name_cn": "右上眼睑",
+        "name_en": "EyelidUpper_Right",
+        "angle_min": null,
+        "angle_max": null,
+        "angle_neutral": null
+    },
+    "06": {
+        "name_cn": "左上眼睑",
+        "name_en": "EyelidUpper_Left",
+        "angle_min": null,
+        "angle_max": null,
+        "angle_neutral": null
+    },
+    "07": {
+        "name_cn": "右下眼睑",
+        "name_en": "EyelidLower_Right",
+        "angle_min": null,
+        "angle_max": null,
+        "angle_neutral": null
+    },
+    "08": {
+        "name_cn": "左下眼睑",
+        "name_en": "EyelidLower_Left",
+        "angle_min": null,
+        "angle_max": null,
+        "angle_neutral": null
+    },
+    "13": {
+        "name_cn": "眼睛pitch",
+        "name_en": "Eye_Pitch",
+        "angle_min": null,
+        "angle_max": null,
+        "angle_neutral": null
+    },
+    "14": {
+        "name_cn": "眼睛yaw",
+        "name_en": "Eye_Yaw",
+        "angle_min": null,
+        "angle_max": null,
+        "angle_neutral": null
+    },
+    "17": {
+        "name_cn": "下巴开合",
+        "name_en": "Jaw_Open",
+        "angle_min": null,
+        "angle_max": null,
+        "angle_neutral": null
+    },
+    "18": {
+        "name_cn": "下巴右",
+        "name_en": "Jaw_Right",
+        "angle_min": null,
+        "angle_max": null,
+        "angle_neutral": null
+    },
+    "19": {
+        "name_cn": "下巴左",
+        "name_en": "Jaw_Left",
+        "angle_min": null,
+        "angle_max": null,
+        "angle_neutral": null
+    },
+    "21": {
+        "name_cn": "右嘴角上",
+        "name_en": "MouthCornerUp_Right",
+        "angle_min": null,
+        "angle_max": null,
+        "angle_neutral": null
+    },
+    "22": {
+        "name_cn": "左嘴角上",
+        "name_en": "MouthCornerUp_Left",
+        "angle_min": null,
+        "angle_max": null,
+        "angle_neutral": null
+    },
+    "23": {
+        "name_cn": "右嘴角下",
+        "name_en": "MouthCornerDown_Right",
+        "angle_min": null,
+        "angle_max": null,
+        "angle_neutral": null
+    },
+    "24": {
+        "name_cn": "左嘴角下",
+        "name_en": "MouthCornerDown_Left",
+        "angle_min": null,
+        "angle_max": null,
+        "angle_neutral": null
+    },
+    "25": {
+        "name_cn": "上嘴唇-前后",
+        "name_en": "LipUpper_FrontBack",
+        "angle_min": null,
+        "angle_max": null,
+        "angle_neutral": null
+    },
+    "26": {
+        "name_cn": "下嘴唇-前后",
+        "name_en": "LipLower_FrontBack",
+        "angle_min": null,
+        "angle_max": null,
+        "angle_neutral": null
+    },
+    "27": {
+        "name_cn": "下嘴唇-上下",
+        "name_en": "LipLower_UpDown",
+        "angle_min": null,
+        "angle_max": null,
+        "angle_neutral": null
+    },
+    "33": {
+        "name_cn": "右颧骨",
+        "name_en": "Cheek_Right",
+        "angle_min": null,
+        "angle_max": null,
+        "angle_neutral": null
+    },
+    "34": {
+        "name_cn": "左颧骨",
+        "name_en": "Cheek_Left",
+        "angle_min": null,
+        "angle_max": null,
+        "angle_neutral": null
+    },
+    "35": {
+        "name_cn": "鼻翼",
+        "name_en": "NoseWing",
+        "angle_min": null,
+        "angle_max": null,
+        "angle_neutral": null
+    },
+    "41": {
+        "name_cn": "脖子右",
+        "name_en": "Neck_Right",
+        "angle_min": null,
+        "angle_max": null,
+        "angle_neutral": null
+    },
+    "42": {
+        "name_cn": "脖子左",
+        "name_en": "Neck_Left",
+        "angle_min": null,
+        "angle_max": null,
+        "angle_neutral": null
+    },
+    "43": {
+        "name_cn": "脖子中",
+        "name_en": "Neck_Center",
+        "angle_min": null,
+        "angle_max": null,
+        "angle_neutral": null
+    }
+}
