@@ -1,0 +1,6 @@
+[submodule "components/ds_servo"]
+	path = components/ds_servo
+	url = https://github.com/OpenFacebot/DSServo_IDF.git
+[submodule "components/micro_ros"]
+	path = components/micro_ros
+	url = https://github.com/OpenFacebot/micro_ros_espidf_component.git
