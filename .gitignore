@@ -1,6 +1,12 @@
 .vscode
 .claude
 .qoder
+.devcontainer
 
+build
 
 _ref_code
+
+managed_components
+sdkconfig
+dependencies.lock
