@@ -10,3 +10,4 @@ _ref_code
 managed_components
 sdkconfig
 dependencies.lock
+sdkconfig.old
