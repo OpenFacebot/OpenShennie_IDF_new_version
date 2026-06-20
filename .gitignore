@@ -11,3 +11,5 @@ managed_components
 sdkconfig
 dependencies.lock
 sdkconfig.old
+
+ros2_ws
