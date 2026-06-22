@@ -24,7 +24,9 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'controller_angle_GUI = pkg_facebot_controller.controller_angle_GUI:main'
+            'controller_angle_GUI = pkg_facebot_controller.controller_angle_GUI:main',
+            'controller_landmark_GUI = pkg_facebot_controller.controller_landmark_GUI:main',
+            'landmark2angle = pkg_facebot_controller.landmark2angle:main',
         ],
     },
 )

@@ -1,0 +1,314 @@
+{
+    "meta": {
+        "description": "Landmark ID 配置: 位点定义、线性映射参数、五连杆机构参数",
+        "version": "1.0",
+        "landmark_ids_order": [1, 2, 3, 4, 5, 6, 7, 8, 13, 14, 17, 18, 21, 22, 23, 24, 25, 26, 27, 33, 34, 35, 41, 42, 43],
+        "note": "landmark_ids_order 定义了 landmark_positions_batch 消息中各元素的顺序"
+    },
+
+    "linear": {
+        "01": {
+            "name_cn": "右内眉",
+            "name_en": "BrowInner_Right",
+            "p_lower": 0.0,
+            "p_upper": 1.0,
+            "servo_id": 1,
+            "B_lower": 1877,
+            "B_upper": 2275,
+            "p_neutral": 0.5
+        },
+        "02": {
+            "name_cn": "左内眉",
+            "name_en": "BrowInner_Left",
+            "p_lower": 0.0,
+            "p_upper": 1.0,
+            "servo_id": 2,
+            "B_lower": 2104,
+            "B_upper": 1706,
+            "p_neutral": 0.5
+        },
+        "03": {
+            "name_cn": "右外眉",
+            "name_en": "BrowOuter_Right",
+            "p_lower": 0.0,
+            "p_upper": 1.0,
+            "servo_id": 3,
+            "B_lower": 1877,
+            "B_upper": 1649,
+            "p_neutral": 0.5
+        },
+        "04": {
+            "name_cn": "左外眉",
+            "name_en": "BrowOuter_Left",
+            "p_lower": 0.0,
+            "p_upper": 1.0,
+            "servo_id": 4,
+            "B_lower": 1991,
+            "B_upper": 2218,
+            "p_neutral": 0.5
+        },
+        "05": {
+            "name_cn": "右上眼睑",
+            "name_en": "EyelidUpper_Right",
+            "p_lower": 0.0,
+            "p_upper": 1.0,
+            "servo_id": 5,
+            "B_lower": 1649,
+            "B_upper": 2104,
+            "p_neutral": 0.2
+        },
+        "06": {
+            "name_cn": "左上眼睑",
+            "name_en": "EyelidUpper_Left",
+            "p_lower": 0.0,
+            "p_upper": 1.0,
+            "servo_id": 6,
+            "B_lower": 2389,
+            "B_upper": 1934,
+            "p_neutral": 0.2
+        },
+        "07": {
+            "name_cn": "右下眼睑",
+            "name_en": "EyelidLower_Right",
+            "p_lower": 0.0,
+            "p_upper": 1.0,
+            "servo_id": 7,
+            "B_lower": 2430,
+            "B_upper": 1775,
+            "p_neutral": 0.3
+        },
+        "08": {
+            "name_cn": "左下眼睑",
+            "name_en": "EyelidLower_Left",
+            "p_lower": 0.0,
+            "p_upper": 1.0,
+            "servo_id": 8,
+            "B_lower": 1463,
+            "B_upper": 2104,
+            "p_neutral": 0.3
+        },
+        "13": {
+            "name_cn": "眼睛pitch",
+            "name_en": "Eye_Pitch",
+            "p_lower": -1.0,
+            "p_upper": 1.0,
+            "servo_id": 13,
+            "B_lower": 1536,
+            "B_upper": 2218,
+            "p_neutral": 0.0
+        },
+        "14": {
+            "name_cn": "眼睛yaw",
+            "name_en": "Eye_Yaw",
+            "p_lower": -1.0,
+            "p_upper": 1.0,
+            "servo_id": 14,
+            "B_lower": 2275,
+            "B_upper": 1991,
+            "p_neutral": 0.0
+        },
+        "25": {
+            "name_cn": "上嘴唇-前后",
+            "name_en": "LipUpper_FrontBack",
+            "p_lower": 0.0,
+            "p_upper": 1.0,
+            "servo_id": 25,
+            "B_lower": 2161,
+            "B_upper": 2446,
+            "p_neutral": 0.2
+        },
+        "26": {
+            "name_cn": "下嘴唇-前后",
+            "name_en": "LipLower_FrontBack",
+            "p_lower": 0.0,
+            "p_upper": 1.0,
+            "servo_id": 26,
+            "B_lower": 1820,
+            "B_upper": 2275,
+            "p_neutral": 0.2
+        },
+        "27": {
+            "name_cn": "下嘴唇-上下",
+            "name_en": "LipLower_UpDown",
+            "p_lower": 0.0,
+            "p_upper": 1.0,
+            "servo_id": 27,
+            "B_lower": 2500,
+            "B_upper": 2400,
+            "p_neutral": 0.5
+        },
+        "33": {
+            "name_cn": "右颧骨",
+            "name_en": "Cheek_Right",
+            "p_lower": 0.0,
+            "p_upper": 1.0,
+            "servo_id": 33,
+            "B_lower": 980,
+            "B_upper": 1138,
+            "p_neutral": 0.5
+        },
+        "34": {
+            "name_cn": "左颧骨",
+            "name_en": "Cheek_Left",
+            "p_lower": 0.0,
+            "p_upper": 1.0,
+            "servo_id": 34,
+            "B_lower": 3071,
+            "B_upper": 3200,
+            "p_neutral": 0.5
+        },
+        "35": {
+            "name_cn": "鼻翼",
+            "name_en": "NoseWing",
+            "p_lower": 0.0,
+            "p_upper": 1.0,
+            "servo_id": 35,
+            "B_lower": 1991,
+            "B_upper": 1800,
+            "p_neutral": 0.2
+        },
+        "41": {
+            "name_cn": "脖子_roll",
+            "name_en": "Neck_Roll",
+            "p_lower": -1.0,
+            "p_upper": 1.0,
+            "servo_id": 41,
+            "B_lower": 0,
+            "B_upper": 4095,
+            "p_neutral": 0.0
+        },
+        "42": {
+            "name_cn": "脖子_pitch",
+            "name_en": "Neck_Pitch",
+            "p_lower": -1.0,
+            "p_upper": 1.0,
+            "servo_id": 42,
+            "B_lower": 0,
+            "B_upper": 4095,
+            "p_neutral": 0.0
+        },
+        "43": {
+            "name_cn": "脖子_yaw",
+            "name_en": "Neck_Yaw",
+            "p_lower": -1.0,
+            "p_upper": 1.0,
+            "servo_id": 43,
+            "B_lower": 0,
+            "B_upper": 4095,
+            "p_neutral": 0.0
+        }
+    },
+
+    "fivebar": {
+        "right_mouth": {
+            "name_cn": "右嘴角",
+            "landmark_x_id": "21",
+            "landmark_y_id": "22",
+            "landmark_x_name": "p_MouthCornerRight_X",
+            "landmark_y_name": "p_MouthCornerRight_Y",
+            "servo_id_1": 21,
+            "servo_id_2": 23,
+            "servo_id_1_bias": 2518,
+            "servo_id_2_bias": 1632,
+            "servo_id_1_direction_factor": -1,
+            "servo_id_2_direction_factor": -1,
+            "servo_1_name": "MouthCornerUp_Right",
+            "servo_2_name": "MouthCornerDown_Right",
+            "A1": [0, 6.5],
+            "A2": [0, -6.5],
+            "l1": 20,
+            "l2": 20,
+            "l3": 25,
+            "l4": 25,
+            "coord_map": {
+                "x_offset": 25,
+                "x_scale": 1,
+                "y_offset": 0,
+                "y_scale": 1
+            },
+            "p_range": {
+                "x_lower": -10.0,
+                "x_upper": 10.0,
+                "y_lower": -10.0,
+                "y_upper": 10.0,
+                "x_neutral": 0.0,
+                "y_neutral": 0.0
+            }
+        },
+        "left_mouth": {
+            "name_cn": "左嘴角",
+            "landmark_x_id": "23",
+            "landmark_y_id": "24",
+            "landmark_x_name": "p_MouthCornerLeft_X",
+            "landmark_y_name": "p_MouthCornerLeft_Y",
+            "servo_id_1": 22,
+            "servo_id_2": 24,
+            "servo_id_1_bias":1909,
+            "servo_id_2_bias":2103,
+            "servo_id_1_direction_factor": 1,
+            "servo_id_2_direction_factor": 1,
+            "servo_1_name": "MouthCornerUp_Left",
+            "servo_2_name": "MouthCornerDown_Left",
+            "A1": [0, 6.5],
+            "A2": [0, -6.5],
+            "l1": 20,
+            "l2": 20,
+            "l3": 25,
+            "l4": 25,
+            "coord_map": {
+                "x_offset": 25,
+                "x_scale": 1,
+                "y_offset": 0,
+                "y_scale": 1
+            },
+            "p_range": {
+                "x_lower": -10.0,
+                "x_upper": 10.0,
+                "y_lower": -10.0,
+                "y_upper": 10.0,
+                "x_neutral": 0.0,
+                "y_neutral": 0.0
+            }
+        },
+        "jaw": {
+            "name_cn": "下巴",
+            "landmark_x_id": "17",
+            "landmark_y_id": "18",
+            "landmark_x_name": "p_Jaw_X",
+            "landmark_y_name": "p_Jaw_Y",
+            "servo_id_1": 17,
+            "servo_id_2a": 18,
+            "servo_id_2b": 19,
+            "servo_id_1_direction_factor": -1,
+            "servo_id_2a_direction_factor": -1,
+            "servo_id_2b_direction_factor": 1,
+            "servo_id_1_bias": 2048,
+            "servo_id_2a_bias": 1068,
+            "servo_id_2b_bias": 3015,
+            "servo_1_name": "Jaw_Open",
+            "servo_2a_name": "Jaw_Right",
+            "servo_2b_name": "Jaw_Left",
+            "note": "Jaw_Right(18) 与 Jaw_Left(19) 取相反转动角度保持同步，作为一个自由度",
+            "A1": [47.5, 0],
+            "A2": [0, -20],
+            "l1": 20,
+            "l2": 20,
+            "l3": 47,
+            "l4": 68,
+            "coord_map": {
+                "x_offset": 67.0,
+                "x_scale": 1,
+                "y_offset": -34.0,
+                "y_scale": 1
+            },
+            "p_range": {
+                "x_lower": -5.0,
+                "x_upper": 5.0,
+                "y_lower": -20.0,
+                "y_upper": -6.00,
+                "x_neutral": -4.0,
+                "y_neutral": -6.0
+            }
+        }
+    }
+}

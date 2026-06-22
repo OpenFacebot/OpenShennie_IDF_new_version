@@ -246,7 +246,7 @@ def main(args=None):
         """20Hz 无条件自动发送"""
         if node.auto_send:
             node.publish_batch()
-        root.after(50, auto_send_tick)
+        root.after(20, auto_send_tick)
 
     auto_send_tick()
     root.mainloop()
