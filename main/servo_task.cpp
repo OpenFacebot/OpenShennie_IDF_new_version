@@ -17,8 +17,8 @@
 #define SERVO_BAUD          1000000
 #define SERVO_FACTORY_BAUD  115200
 #define SERVO_FREQ_HZ       10          // 控制频率
-#define TEMP_ALARM          55          // 高温报警阈值
-#define TEMP_RECOVER        53          // 恢复阈值
+#define TEMP_ALARM          70          // 高温报警阈值
+#define TEMP_RECOVER        65          // 恢复阈值
 #define OFFLINE_MISS_MAX    3           // 连续失败次数→离线
 
 // ============================================================
