@@ -64,7 +64,7 @@
             "p_upper": 1.0,
             "servo_id": 6,
             "B_lower": 2389,
-            "B_upper": 1934,
+            "B_upper": 1870,
             "p_neutral": 0.2
         },
         "07": {
@@ -74,8 +74,8 @@
             "p_upper": 1.0,
             "servo_id": 7,
             "B_lower": 2430,
-            "B_upper": 1775,
-            "p_neutral": 0.3
+            "B_upper": 1800,
+            "p_neutral": 0.4
         },
         "08": {
             "name_cn": "左下眼睑",
@@ -85,7 +85,7 @@
             "servo_id": 8,
             "B_lower": 1463,
             "B_upper": 2104,
-            "p_neutral": 0.3
+            "p_neutral": 0.4
         },
         "13": {
             "name_cn": "眼睛pitch",
@@ -133,8 +133,8 @@
             "p_lower": 0.0,
             "p_upper": 1.0,
             "servo_id": 27,
-            "B_lower": 2500,
-            "B_upper": 2400,
+            "B_lower": 2190,
+            "B_upper": 2500,
             "p_neutral": 0.5
         },
         "33": {
@@ -305,9 +305,9 @@
                 "x_lower": -5.0,
                 "x_upper": 5.0,
                 "y_lower": -20.0,
-                "y_upper": -6.00,
+                "y_upper": -3.5,
                 "x_neutral": -4.0,
-                "y_neutral": -6.0
+                "y_neutral": -3.5
             }
         }
     }
