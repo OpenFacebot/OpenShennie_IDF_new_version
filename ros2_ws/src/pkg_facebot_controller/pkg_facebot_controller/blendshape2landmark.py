@@ -7,7 +7,7 @@ blendshape2landmark — 独立 ROS2 节点
 计算 landmark 位置后发布 landmark_positions_batch (Float32MultiArray, 25 维)。
 
 转换公式:
-  l = neutral + sum(bs[i] * scale[i] * delta[i])
+  l = neutral + sum(bs[i] * scale[i] * (absolute[i] - neutral))
 
 配置集中存储在 _doc/blendshapeID_info.json
 """
@@ -170,7 +170,8 @@ def blendshapes_to_landmarks(
     """
     批量转换: blendshape 值 (61 维) → landmark 位置 (25 维)。
 
-    公式: l = neutral + sum(bs[i] * scale[i] * delta[i])
+    deltas 记录的是绝对目标值 (bs=1.0 时的最终位置)，
+    公式: l = neutral + sum(bs[i] * scale[i] * (absolute[i] - neutral))
     """
     result = list(neutral)
     bs_dict = bs_config.get('blendshapes', {})
@@ -184,12 +185,12 @@ def blendshapes_to_landmarks(
         if abs(w) < 1e-9:
             continue
 
-        deltas = bs_entry.get('deltas', {})
-        for lid_str, delta_val in deltas.items():
+        absolutes = bs_entry.get('deltas', {})
+        for lid_str, abs_val in absolutes.items():
             lid = int(lid_str)
             idx = lid_to_idx.get(lid)
             if idx is not None and idx < len(result):
-                result[idx] += w * delta_val
+                result[idx] += w * (abs_val - neutral[idx])
 
     # clamp 到各 landmark 合法范围
     for lid, idx in lid_to_idx.items():
