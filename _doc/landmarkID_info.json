@@ -208,8 +208,8 @@
             "landmark_y_name": "p_MouthCornerRight_Y",
             "servo_id_1": 21,
             "servo_id_2": 23,
-            "servo_id_1_bias": 2518,
-            "servo_id_2_bias": 1632,
+            "servo_id_1_bias": 1880,
+            "servo_id_2_bias": 2241,
             "servo_id_1_direction_factor": -1,
             "servo_id_2_direction_factor": -1,
             "servo_1_name": "MouthCornerUp_Right",
@@ -227,10 +227,10 @@
                 "y_scale": 1
             },
             "p_range": {
-                "x_lower": -10.0,
-                "x_upper": 10.0,
-                "y_lower": -10.0,
-                "y_upper": 10.0,
+                "x_lower": -15.0,
+                "x_upper": 15.0,
+                "y_lower": -15.0,
+                "y_upper": 15.0,
                 "x_neutral": 0.0,
                 "y_neutral": 0.0
             }
@@ -244,7 +244,7 @@
             "servo_id_1": 22,
             "servo_id_2": 24,
             "servo_id_1_bias":1909,
-            "servo_id_2_bias":2103,
+            "servo_id_2_bias":1570,
             "servo_id_1_direction_factor": 1,
             "servo_id_2_direction_factor": 1,
             "servo_1_name": "MouthCornerUp_Left",
@@ -262,10 +262,10 @@
                 "y_scale": 1
             },
             "p_range": {
-                "x_lower": -10.0,
-                "x_upper": 10.0,
-                "y_lower": -10.0,
-                "y_upper": 10.0,
+                "x_lower": -15.0,
+                "x_upper": 15.0,
+                "y_lower": -15.0,
+                "y_upper": 15.0,
                 "x_neutral": 0.0,
                 "y_neutral": 0.0
             }
@@ -306,7 +306,7 @@
                 "x_upper": 5.0,
                 "y_lower": -20.0,
                 "y_upper": -3.5,
-                "x_neutral": -4.0,
+                "x_neutral": -5.0,
                 "y_neutral": -3.5
             }
         }
