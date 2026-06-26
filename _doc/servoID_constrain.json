@@ -95,34 +95,34 @@
         "name_en": "MouthCornerUp_Right",
         "angle_min": null,
         "angle_max": null,
-        "angle_neutral": null
+        "angle_neutral": 1364
     },
     "22": {
         "name_cn": "左嘴角上",
         "name_en": "MouthCornerUp_Left",
         "angle_min": null,
         "angle_max": null,
-        "angle_neutral": null
+        "angle_neutral": 2425
     },
     "23": {
         "name_cn": "右嘴角下",
         "name_en": "MouthCornerDown_Right",
         "angle_min": null,
         "angle_max": null,
-        "angle_neutral": null
+        "angle_neutral": 2757
     },
     "24": {
         "name_cn": "左嘴角下",
         "name_en": "MouthCornerDown_Left",
         "angle_min": null,
         "angle_max": null,
-        "angle_neutral": null
+        "angle_neutral": 1054
     },
     "25": {
         "name_cn": "上嘴唇-前后",
         "name_en": "LipUpper_FrontBack",
         "angle_min": 2161,
-        "angle_max": 2446,
+        "angle_max": 3000,
         "angle_neutral": 2218
     },
     "26": {

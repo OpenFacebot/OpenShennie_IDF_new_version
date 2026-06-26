@@ -221,7 +221,7 @@
             "l3": 25,
             "l4": 25,
             "coord_map": {
-                "x_offset": 25,
+                "x_offset": 28,
                 "x_scale": 1,
                 "y_offset": 0,
                 "y_scale": 1
@@ -256,7 +256,7 @@
             "l3": 25,
             "l4": 25,
             "coord_map": {
-                "x_offset": 25,
+                "x_offset": 28,
                 "x_scale": 1,
                 "y_offset": 0,
                 "y_scale": 1
