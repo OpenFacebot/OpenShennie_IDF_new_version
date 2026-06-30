@@ -113,8 +113,8 @@
             "p_lower": 0.0,
             "p_upper": 1.0,
             "servo_id": 25,
-            "B_lower": 2161,
-            "B_upper": 2446,
+            "B_lower": 1800,
+            "B_upper": 2620,
             "p_neutral": 0.2
         },
         "26": {
@@ -124,7 +124,7 @@
             "p_upper": 1.0,
             "servo_id": 26,
             "B_lower": 1820,
-            "B_upper": 2275,
+            "B_upper": 2400,
             "p_neutral": 0.2
         },
         "27": {
@@ -208,7 +208,7 @@
             "landmark_y_name": "p_MouthCornerRight_Y",
             "servo_id_1": 21,
             "servo_id_2": 23,
-            "servo_id_1_bias": 1880,
+            "servo_id_1_bias": 2905,
             "servo_id_2_bias": 2241,
             "servo_id_1_direction_factor": -1,
             "servo_id_2_direction_factor": -1,
@@ -307,7 +307,7 @@
                 "y_lower": -20.0,
                 "y_upper": -3.5,
                 "x_neutral": -5.0,
-                "y_neutral": -3.5
+                "y_neutral": -7.0
             }
         }
     }
