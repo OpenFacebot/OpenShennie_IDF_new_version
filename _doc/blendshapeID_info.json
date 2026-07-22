@@ -7,20 +7,20 @@
         "note": "neutral 为 25 个 landmark 的中性脸 p 值; deltas 为稀疏记录, key=landmark_id, value=delta"
     },
 
-    "neutral": [0.5, 0.5, 0.5, 0.5, 0.2, 0.2, 0.4, 0.4, 0.0, 0.0, -5.0, -7.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.2, 0.5, 0.5, 0.5, 0.2, 0.0, 0.0, 0.0],
+    "neutral": [0.5, 0.5, 0.5, 0.5, 0.2, 0.2, 0.4, 0.4, 0.0, 0.0, -11.0, -11.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.4, 0.5, 0.5, 0.5, 0.2, 0.0, 0.0, 0.0],
 
     "blendshapes": {
         "0": {
             "name": "EyeBlinkLeft",
             "name_cn": "左眼眨眼",
             "scale": 1.0,
-            "deltas": {"6": 1.0, "8": 1.0}
+            "deltas": {"6": 1.0}
         },
         "1": {
             "name": "EyeLookDownLeft",
             "name_cn": "左眼下看",
             "scale": 1.0,
-            "deltas": {"6": 0.4, "8":0.2 }
+            "deltas": {"6": 0.6, "8":0 }
         },
         "2": {
             "name": "EyeLookInLeft",
@@ -38,13 +38,13 @@
             "name": "EyeLookUpLeft",
             "name_cn": "左眼看上",
             "scale": 1.0,
-            "deltas": {"6": 0, "8": 0.9}
+            "deltas": {"6": 0}
         },
         "5": {
             "name": "EyeSquintLeft",
             "name_cn": "左眼眯眼",
             "scale": 1.0,
-            "deltas": {"6": 0.5, "8": 0.7}
+            "deltas": {"6": 0.6, "8": 0.8}
         },
         "6": {
             "name": "EyeWideLeft",
@@ -56,13 +56,13 @@
             "name": "EyeBlinkRight",
             "name_cn": "右眼眨眼",
             "scale": 1.0,
-            "deltas": {"5": 1.0, "7": 1.0}
+            "deltas": {"5": 1.0}
         },
         "8": {
             "name": "EyeLookDownRight",
             "name_cn": "右眼下看",
             "scale": 1.0,
-            "deltas": {"5": 0.4 ,"7": 0.2}
+            "deltas": {"5": 0.6 ,"7": 0}
         },
         "9": {
             "name": "EyeLookInRight",
@@ -81,13 +81,13 @@
             "name": "EyeLookUpRight",
             "name_cn": "右眼看上",
             "scale": 1.0,
-            "deltas": {"5": 0, "7": 0.9}
+            "deltas": {"5": 0}
         },
         "12": {
             "name": "EyeSquintRight",
             "name_cn": "右眼眯眼",
             "scale": 1.0,
-            "deltas": {"5": 0.5, "7": 0.7}
+            "deltas": {"5": 0.6, "7": 0.8}
         },
         "13": {
             "name": "EyeWideRight",
@@ -99,7 +99,7 @@
             "name": "JawForward",
             "name_cn": "下巴前伸",
             "scale": 1.0,
-            "deltas": {"17": 5.0 }
+            "deltas": {"17": -1.0 }
         },
         "15": {
             "name": "JawLeft",
@@ -119,14 +119,14 @@
             "name": "JawOpen",
             "name_cn": "下巴张开",
             "scale": 1.5,
-            "deltas": {"18": -20.0}
+            "deltas": {"18": -30.0}
         },
 
         "18": {
             "name": "MouthCLose",
             "name_cn": "嘴唇闭合",
             "scale": 1.0,
-            "deltas": {"27": 0.1}
+            "deltas": {"27": 1.0}
         },
         
         "19": {
@@ -139,7 +139,7 @@
             "name": "MouthPucker",
             "name_cn": "嘴唇撅起",
             "scale": 1.5,
-            "deltas": {"25": 1, "26": 1,"21": 8.0, "23": 8.0 }
+            "deltas": {"25": 1, "26": 1,"21": 8.0, "23": 8.0 , "27":1.0}
         },
         "21": {
             "name": "MouthLeft",
@@ -157,13 +157,13 @@
             "name": "MouthSmileLeft",
             "name_cn": "左嘴角微笑",
             "scale": 1.0,
-            "deltas": {"24": 10.0, "23": -10.0}
+            "deltas": {"24": 10.0, "23": 10.0}
         },
         "24": {
             "name": "MouthSmileRight",
             "name_cn": "右嘴角微笑",
             "scale": 1.0,
-            "deltas": {"22": 10.0, "21": -10.0}
+            "deltas": {"22": 10.0, "21": 10.0}
         },
 
         "25": {
@@ -182,13 +182,13 @@
             "name": "MouthDimpleLeft",
             "name_cn": "左酒窝",
             "scale": 1.0,
-            "deltas": {"24": 10.0}
+            "deltas": {"23": -10.0}
         },
         "28": {
             "name": "MouthDimpleRight",
             "name_cn": "右酒窝",
             "scale": 1.0,
-            "deltas": {"22": 10.0}
+            "deltas": {"21": -10.0}
         },
         "29": {
             "name": "MouthStretchLeft",
@@ -219,7 +219,7 @@
             "name": "MouthShrugLower",
             "name_cn": "下唇耸起",
             "scale": 1.0,
-            "deltas": {"27": 0.4, "26": 1.0}
+            "deltas": {"27": 1.0, "26": 1.0}
         },
         "34": {
             "name": "MouthShrugUpper",
@@ -267,31 +267,31 @@
             "name": "BrowDownLeft",
             "name_cn": "左眉下压",
             "scale": 0.5,
-            "deltas": {"2": 0.1, "4": 0.1}
+            "deltas": {"2": 0, "4": 1.0}
         },
         "42": {
             "name": "BrowDownRight",
             "name_cn": "右眉下压",
             "scale": 0.5,
-            "deltas": {"1": 0.1, "3": 0.1}
+            "deltas": {"1": 0, "3": 1.0}
         },
         "43": {
             "name": "BrowInnerUp",
             "name_cn": "内眉上抬",
             "scale": 1.0,
-            "deltas": {"1": 0.9, "2": 0.9}
+            "deltas": {"1": 1.0, "2": 1.0}
         },
         "44": {
             "name": "BrowOuterUpLeft",
             "name_cn": "左外眉上抬",
             "scale": 1.0,
-            "deltas": {"4": 0.9}
+            "deltas": {"4": 1.0}
         },
         "45": {
             "name": "BrowOuterUpRight",
             "name_cn": "右外眉上抬",
             "scale": 1.0,
-            "deltas": {"3": 0.9}
+            "deltas": {"3": 1.0}
         },
         "46": {
             "name": "CheekPuff",

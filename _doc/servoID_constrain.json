@@ -9,86 +9,86 @@
     "02": {
         "name_cn": "左内眉",
         "name_en": "BrowInner_Left",
-        "angle_min": 1706,
+        "angle_min": 1770,
         "angle_max": 2104,
         "angle_neutral": 1964
     },
     "03": {
         "name_cn": "右外眉",
         "name_en": "BrowOuter_Right",
-        "angle_min": 1649,
-        "angle_max": 1877,
-        "angle_neutral": 1761
+        "angle_min": 2000,
+        "angle_max": 2250,
+        "angle_neutral": 2180
     },
     "04": {
         "name_cn": "左外眉",
         "name_en": "BrowOuter_Left",
-        "angle_min": 1991,
-        "angle_max": 2218,
-        "angle_neutral": 2103
+        "angle_min": 1980,
+        "angle_max": 2330,
+        "angle_neutral": 2150
     },
     "05": {
         "name_cn": "右上眼睑",
         "name_en": "EyelidUpper_Right",
-        "angle_min": 1649,
-        "angle_max": 2104,
-        "angle_neutral": 1723
+        "angle_min": 2776,
+        "angle_max": 2060,
+        "angle_neutral": 2272
     },
     "06": {
         "name_cn": "左上眼睑",
         "name_en": "EyelidUpper_Left",
-        "angle_min": 1934,
-        "angle_max": 2389,
-        "angle_neutral": 2263
+        "angle_min": 1400,
+        "angle_max": 2160,
+        "angle_neutral": 1970
     },
     "07": {
         "name_cn": "右下眼睑",
         "name_en": "EyelidLower_Right",
-        "angle_min": 1775,
-        "angle_max": 2430,
-        "angle_neutral": 2173
+        "angle_min": 2049,
+        "angle_max": 2421,
+        "angle_neutral": 2231
     },
     "08": {
         "name_cn": "左下眼睑",
         "name_en": "EyelidLower_Left",
-        "angle_min": 1463,
+        "angle_min": 1732,
         "angle_max": 2104,
-        "angle_neutral": 1720
+        "angle_neutral": 1978
     },
     "13": {
         "name_cn": "眼睛pitch",
         "name_en": "Eye_Pitch",
-        "angle_min": 1536,
-        "angle_max": 2218,
-        "angle_neutral": 2015
+        "angle_min": 2130,
+        "angle_max": 2870,
+        "angle_neutral": 2500
     },
     "14": {
         "name_cn": "眼睛yaw",
         "name_en": "Eye_Yaw",
-        "angle_min": 1991,
-        "angle_max": 2275,
-        "angle_neutral": 2160
+        "angle_min": 1880,
+        "angle_max": 2100,
+        "angle_neutral": 1990
     },
     "17": {
         "name_cn": "下巴开合",
         "name_en": "Jaw_Open",
-        "angle_min": 1563,
-        "angle_max": 2332,
-        "angle_neutral": 1771
+        "angle_min": 1910,
+        "angle_max": 2800,
+        "angle_neutral": 1970
     },
     "18": {
         "name_cn": "下巴右",
         "name_en": "Jaw_Right",
-        "angle_min": 1991,
+        "angle_min": 1500,
         "angle_max": 2446,
-        "angle_neutral": 2275
+        "angle_neutral": 1730
     },
     "19": {
         "name_cn": "下巴左",
         "name_en": "Jaw_Left",
         "angle_min": 1536,
-        "angle_max": 1991,
-        "angle_neutral": 1706
+        "angle_max": 2500,
+        "angle_neutral": 2233
     },
     "21": {
         "name_cn": "右嘴角上",
@@ -121,37 +121,37 @@
     "25": {
         "name_cn": "上嘴唇-前后",
         "name_en": "LipUpper_FrontBack",
-        "angle_min": 1800,
-        "angle_max": 2620,
-        "angle_neutral": 2218
+        "angle_min": 1300,
+        "angle_max": 2070,
+        "angle_neutral": 1500
     },
     "26": {
         "name_cn": "下嘴唇-前后",
         "name_en": "LipLower_FrontBack", 
-        "angle_min": 1820,
-        "angle_max": 2400,
-        "angle_neutral": 2275
+        "angle_min": 1600,
+        "angle_max": 2000,
+        "angle_neutral": 1891
     },
     "27": {
         "name_cn": "下嘴唇-上下",
         "name_en": "LipLower_UpDown",
-        "angle_min": 2190,
-        "angle_max": 2500,
-        "angle_neutral": 2358
+        "angle_min": 1700,
+        "angle_max": 2200,
+        "angle_neutral": 1800
     },
     "33": {
         "name_cn": "右颧骨",
         "name_en": "Cheek_Right",
-        "angle_min": 980,
+        "angle_min": 900,
         "angle_max": 1138,
         "angle_neutral": 1000
     },
     "34": {
         "name_cn": "左颧骨",
         "name_en": "Cheek_Left",
-        "angle_min": 3071,
-        "angle_max": 3200,
-        "angle_neutral": 3100
+        "angle_min": 3312,
+        "angle_max": 3550,
+        "angle_neutral": 3450
     },
     "35": {
         "name_cn": "鼻翼",
