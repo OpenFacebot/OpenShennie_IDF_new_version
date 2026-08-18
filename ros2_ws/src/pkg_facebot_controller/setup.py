@@ -29,6 +29,7 @@ setup(
             'controller_blendshape_GUI = pkg_facebot_controller.controller_blendshape_GUI:main',
             'landmark2angle = pkg_facebot_controller.landmark2angle:main',
             'blendshape2landmark = pkg_facebot_controller.blendshape2landmark:main',
+            'servo_visualizer = pkg_facebot_controller.servo_visualizer:main',
         ],
     },
 )

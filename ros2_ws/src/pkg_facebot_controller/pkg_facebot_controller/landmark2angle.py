@@ -23,7 +23,18 @@ from std_msgs.msg import Float32MultiArray
 # ---------------------------------------------------------------------------
 #  常量
 # ---------------------------------------------------------------------------
-_DOC_DIR = '/home/user/Documents/openShennie_IDF/_doc'
+# 向上搜索找到 _doc 目录（兼容源码和安装位置）
+_doc_candidate = os.path.dirname(os.path.abspath(__file__))
+_DOC_DIR = ''
+for _ in range(15):
+    _test = os.path.join(_doc_candidate, '_doc')
+    if os.path.isdir(_test):
+        _DOC_DIR = _test
+        break
+    _next = os.path.dirname(_doc_candidate)
+    if _next == _doc_candidate:
+        break
+    _doc_candidate = _next
 _CONFIG_PATH = os.path.join(_DOC_DIR, 'landmarkID_info.json')
 
 # 26 个舵机 ID（与 ESP32 固件顺序一致，复用 servo_config 约定）

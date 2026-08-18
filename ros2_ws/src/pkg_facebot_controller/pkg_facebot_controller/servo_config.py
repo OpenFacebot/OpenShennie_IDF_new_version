@@ -17,7 +17,18 @@ SERVO_IDS = [1, 2, 3, 4, 5, 6, 7, 8, 13, 14, 17, 18, 19,
              21, 22, 23, 24, 25, 26, 27, 33, 34, 35, 41, 42, 43]
 
 # 加载 servoID_constrain.json
-_DOC_DIR = '/home/user/Documents/openShennie_IDF/_doc'
+# 向上搜索找到 _doc 目录（兼容源码和安装位置）
+_doc_candidate = os.path.dirname(os.path.abspath(__file__))
+_DOC_DIR = ''
+for _ in range(15):
+    _test = os.path.join(_doc_candidate, '_doc')
+    if os.path.isdir(_test):
+        _DOC_DIR = _test
+        break
+    _next = os.path.dirname(_doc_candidate)
+    if _next == _doc_candidate:
+        break
+    _doc_candidate = _next
 _json_path = os.path.join(_DOC_DIR, 'servoID_constrain.json')
 
 try:

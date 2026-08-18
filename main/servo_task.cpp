@@ -1,25 +1,107 @@
 #include "servo_task.h"
-#include "servo_state_db.h"
 #include "servo_config.h"
-#include "servo_types.h"
 #include "DSServo.h"
 
 #include <stdio.h>
 #include <string.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "freertos/semphr.h"
+#include "freertos/queue.h"
 #include "driver/uart.h"
 
 // ---- 硬件配置 ----
 #define SERVO_UART          UART_NUM_1
-#define SERVO_TX_PIN        20
-#define SERVO_RX_PIN        21
+#define SERVO_TX_PIN        18
+#define SERVO_RX_PIN        19
 #define SERVO_BAUD          1000000
 #define SERVO_FACTORY_BAUD  115200
-#define SERVO_FREQ_HZ       10          // 控制频率
+#define SERVO_FREQ_HZ       30          // 控制频率
 #define TEMP_ALARM          70          // 高温报警阈值
 #define TEMP_RECOVER        65          // 恢复阈值
 #define OFFLINE_MISS_MAX    3           // 连续失败次数→离线
+
+// 无目标哨兵: 0-4095 外的值表示"该舵机尚未收到目标"
+#define NO_TARGET           0xFFFF
+
+// ============================================================
+//  共享状态 — 全部归 servo_task.cpp 所有
+//  (替代 ServoStateDB, 直接用 FreeRTOS 原语隔离两个 Task)
+// ============================================================
+
+// 目标位置 (micro_ros 写, servo_task 锁内整拷)
+static uint16_t          g_targets[MAX_SERVO_SLOTS + 1];
+static SemaphoreHandle_t g_target_mutex;
+
+// 指令队列 (micro_ros 发, servo_task 收)
+static QueueHandle_t     g_cmd_queue;
+
+// 反馈数据 (servo_task 写, micro_ros service 读)
+static ServoSnapshot     g_feedback[MAX_SERVO_SLOTS + 1];
+static SemaphoreHandle_t g_feedback_mutex;
+
+// 急停 / 模式 (volatile, 单写者)
+static volatile bool     g_emergency_stop;
+static volatile bool     g_manual_mode;
+
+// EMA 插值状态 (servo_task 独占, 无锁)
+static ServoMotionState  g_motion[MAX_SERVO_SLOTS + 1];
+
+// ============================================================
+//  共享 API — 锁内只做 copy in/out, 不做计算
+// ============================================================
+
+void servo_share_init() {
+    g_target_mutex   = xSemaphoreCreateMutex();
+    g_feedback_mutex = xSemaphoreCreateMutex();
+    g_cmd_queue      = xQueueCreate(CMD_QUEUE_LENGTH, sizeof(ServoCommand));
+
+    for (int i = 0; i <= MAX_SERVO_SLOTS; i++)
+        g_targets[i] = NO_TARGET;
+    memset(g_feedback, 0, sizeof(g_feedback));
+    memset(g_motion, 0, sizeof(g_motion));
+    g_emergency_stop = false;
+    g_manual_mode    = true;
+}
+
+void servo_set_target(uint8_t id, uint16_t position) {
+    if (id == 0 || id > MAX_SERVO_SLOTS) return;
+    xSemaphoreTake(g_target_mutex, portMAX_DELAY);
+    g_targets[id] = position;
+    xSemaphoreGive(g_target_mutex);
+}
+
+bool servo_send_command(const ServoCommand &cmd) {
+    return xQueueSend(g_cmd_queue, &cmd, 0) == pdTRUE;
+}
+
+int servo_get_all_feedback(ServoSnapshot *out, int max_count) {
+    int count = 0;
+    xSemaphoreTake(g_feedback_mutex, portMAX_DELAY);
+    for (int i = 1; i <= MAX_SERVO_SLOTS && count < max_count; i++) {
+        if (g_feedback[i].valid) {
+            out[count++] = g_feedback[i];
+        }
+    }
+    xSemaphoreGive(g_feedback_mutex);
+    return count;
+}
+
+void servo_set_emergency_stop(bool stop) {
+    g_emergency_stop = stop;
+}
+
+bool servo_is_emergency_stop() {
+    return g_emergency_stop;
+}
+
+void servo_set_manual_mode(bool manual) {
+    g_manual_mode = manual;
+}
+
+bool servo_is_manual_mode() {
+    return g_manual_mode;
+}
 
 // ============================================================
 //  波特率工具
@@ -134,35 +216,48 @@ static void smart_baud_init(DSServo &servo, const ServoConfig *cfgs, int cfg_cou
     }
 }
 
-static void read_one_servo(DSServo &servo, ServoStateDB *db, const ServoConfig &cfg, uint8_t *miss_cnt) {
+// ============================================================
+//  反馈读取 — 每次读 1 个舵机 (增量轮询)
+// ============================================================
+static void read_one_servo(DSServo &servo, const ServoConfig &cfg, uint8_t *miss_cnt) {
     int16_t pos = servo.getPosition(cfg.id);
     int16_t temp = servo.getTemperature(cfg.id);
 
     if (pos >= 0) {
         uint8_t st = servo.getServoStatus(cfg.id);
-        db->updateServo(cfg.id, pos, 0, 0, temp, st, true);
+        xSemaphoreTake(g_feedback_mutex, portMAX_DELAY);
+        g_feedback[cfg.id].id          = cfg.id;
+        g_feedback[cfg.id].position    = pos;
+        g_feedback[cfg.id].temperature = temp;
+        g_feedback[cfg.id].status      = st;
+        g_feedback[cfg.id].valid       = true;
+        xSemaphoreGive(g_feedback_mutex);
         *miss_cnt = 0;
 
         // 高温监测
         if (temp >= TEMP_ALARM) {
             st |= 0x40;
-            db->setEmergencyStop(true);
+            servo_set_emergency_stop(true);
             printf("[警告] 舵机%d 温度过高: %d°C\n", cfg.id, temp);
         }
     } else {
         // 读取失败 → 累计离线计数
         (*miss_cnt)++;
         if (*miss_cnt >= OFFLINE_MISS_MAX) {
-            db->updateServo(cfg.id, 0, 0, 0, 0, OFFLINE_STATUS, false);
+            xSemaphoreTake(g_feedback_mutex, portMAX_DELAY);
+            g_feedback[cfg.id].valid = false;
+            xSemaphoreGive(g_feedback_mutex);
             printf("[状态] 舵机%d 离线\n", cfg.id);
         }
     }
 }
 
-
-static void process_commands(DSServo &servo, ServoStateDB *db, const ServoConfig *cfgs, int count) {
+// ============================================================
+//  指令处理 — 从队列取出非位置指令执行
+// ============================================================
+static void process_commands(DSServo &servo, const ServoConfig *cfgs, int count) {
     ServoCommand cmd;
-    while (db->receiveCommand(&cmd, 0)) {
+    while (xQueueReceive(g_cmd_queue, &cmd, 0) == pdTRUE) {
         switch (cmd.type) {
         case ServoCmdType::SET_TORQUE:
             if (cmd.id == DS_BROADCAST_ID)
@@ -190,45 +285,91 @@ static void process_commands(DSServo &servo, ServoStateDB *db, const ServoConfig
     }
 }
 
-
+// ============================================================
+//  servo_task — 30Hz 主循环
+//  [1] 处理指令队列   [2] EMA 平滑→syncWrite   [3] 增量反馈
+// ============================================================
 void servo_task(void *arg) {
-      auto *p = (ServoTaskParams *)arg;
-      DSServo servo;
+    auto *p = (ServoTaskParams *)arg;
+    DSServo servo;
 
-      // 1. 智能波特率初始化
-      smart_baud_init(servo, p->cfgs, p->cfg_count);
+    // 1. 智能波特率初始化
+    smart_baud_init(servo, p->cfgs, p->cfg_count);
 
-      // 2. 开启所有舵机扭矩
-      for (int i = 0; i < p->cfg_count; i++)
-          servo.setTorque(p->cfgs[i].id, true);
+    // 2. 开启所有舵机扭矩
+    for (int i = 0; i < p->cfg_count; i++)
+        servo.setTorque(p->cfgs[i].id, true);
 
-      printf("[舵机] %d个舵机就绪, %dHz\n", p->cfg_count, SERVO_FREQ_HZ);
+    printf("[舵机] %d个舵机就绪, %dHz\n", p->cfg_count, SERVO_FREQ_HZ);
 
-      TickType_t last_wake = xTaskGetTickCount();
-      const TickType_t period = pdMS_TO_TICKS(1000 / SERVO_FREQ_HZ);
-      uint8_t miss_cnt[48] = {0};
-      uint32_t read_idx = 0;
+    TickType_t last_wake = xTaskGetTickCount();
+    const TickType_t period = pdMS_TO_TICKS(1000 / SERVO_FREQ_HZ);
+    uint8_t miss_cnt[MAX_SERVO_SLOTS + 1] = {0};
+    uint32_t read_idx = 0;
 
-      while (1) {
-          // ---- 队列指令 ----
-          process_commands(servo, p->db, p->cfgs, p->cfg_count);
+    while (1) {
+        // ---- 1. 队列指令 ----
+        process_commands(servo, p->cfgs, p->cfg_count);
 
-          // ---- 急停时跳过控制 ----
-          if (!p->db->isEmergencyStop()) {
-              // ---- 消费 target → syncWrite ----
-              DSSyncWriteData sync_buf[MAX_SERVO_SLOTS + 1];
-              int sync_count = 0;
-              if (p->db->consumeTargets(sync_buf, MAX_SERVO_SLOTS + 1, &sync_count)) {
-                  servo.syncWritePosition(sync_buf, (uint8_t)sync_count);
-              }
-          }
+        // ---- 2. 急停时跳过位置控制 ----
+        if (!g_emergency_stop) {
+            // 2a. 锁内拷贝目标 (持锁 < 1μs)
+            uint16_t local_targets[MAX_SERVO_SLOTS + 1];
+            xSemaphoreTake(g_target_mutex, portMAX_DELAY);
+            memcpy(local_targets, g_targets, sizeof(g_targets));
+            xSemaphoreGive(g_target_mutex);
 
-          // ---- 增量反馈 (每次读 1 个舵机) ----
-          read_one_servo(servo, p->db, p->cfgs[read_idx], &miss_cnt[read_idx]);
-          read_idx = (read_idx + 1) % p->cfg_count;
+            // 2b. 锁外 EMA 平滑 + 组包
+            DSSyncWriteData sync_buf[MAX_SERVO_SLOTS + 1];
+            int sync_count = 0;
 
-          vTaskDelayUntil(&last_wake, period);
-      }
-  }
+            for (int i = 0; i < p->cfg_count; i++) {
+                uint8_t id = p->cfgs[i].id;
+                ServoMotionState &m = g_motion[id];
 
+                bool first_activation = false;
 
+                // 有新目标
+                if (local_targets[id] != NO_TARGET) {
+                    if (!m.active) {
+                        // 首次目标: 以反馈位置为起点, 无反馈则直接对齐目标 (避免从0爬升)
+                        m.current   = g_feedback[id].valid
+                                    ? (float)g_feedback[id].position
+                                    : (float)local_targets[id];
+                        m.target    = local_targets[id];
+                        m.active    = true;
+                        first_activation = true;  // 首帧强制发送, 跳过死区
+                    } else {
+                        m.target = local_targets[id];
+                    }
+                }
+                if (!m.active) continue;
+
+                // EMA 一阶低通: 每帧向目标走剩余距离的 DEFAULT_SMOOTHING
+                m.current += ((float)m.target - m.current) * DEFAULT_SMOOTHING;
+
+                // 死区: |Δ| < POSITION_DEADZONE 不发送, 避免微抖刷总线
+                // 例外: 首次激活 或 目标变更后首帧 强制发送
+                int diff = (int)m.current - (int)m.last_sent;
+                if (diff < 0) diff = -diff;
+                if (diff >= POSITION_DEADZONE || first_activation) {
+                    sync_buf[sync_count].id       = id;
+                    sync_buf[sync_count].position = (uint16_t)m.current;
+                    sync_buf[sync_count].time_ms  = MIN_MOVE_TIME;
+                    sync_count++;
+                    m.last_sent = (uint16_t)m.current;
+                }
+            }
+
+            // 2c. 一次性同步写
+            if (sync_count > 0)
+                servo.syncWritePosition(sync_buf, (uint8_t)sync_count);
+        }
+
+        // ---- 3. 增量反馈 (每次读 1 个舵机) ----
+        read_one_servo(servo, p->cfgs[read_idx], &miss_cnt[read_idx]);
+        read_idx = (read_idx + 1) % p->cfg_count;
+
+        vTaskDelayUntil(&last_wake, period);
+    }
+}

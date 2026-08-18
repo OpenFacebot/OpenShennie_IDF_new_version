@@ -5,6 +5,10 @@
 
 build
 
+install
+log
+saved_figures
+
 _ref_code
 
 managed_components

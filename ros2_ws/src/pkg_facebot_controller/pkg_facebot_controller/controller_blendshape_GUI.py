@@ -22,7 +22,18 @@ import tkinter as tk
 # ---------------------------------------------------------------------------
 #  常量
 # ---------------------------------------------------------------------------
-_DOC_DIR = '/home/user/Documents/openShennie_IDF/_doc'
+# 向上搜索找到 _doc 目录（兼容源码和安装位置）
+_doc_candidate = os.path.dirname(os.path.abspath(__file__))
+_DOC_DIR = ''
+for _ in range(15):
+    _test = os.path.join(_doc_candidate, '_doc')
+    if os.path.isdir(_test):
+        _DOC_DIR = _test
+        break
+    _next = os.path.dirname(_doc_candidate)
+    if _next == _doc_candidate:
+        break
+    _doc_candidate = _next
 _BS_CONFIG_PATH = os.path.join(_DOC_DIR, 'blendshapeID_info.json')
 
 _NUM_BLENDSHAPES = 61
@@ -136,7 +147,7 @@ class BlendshapeGuiNode(Node):
 
         # 发布者
         self.bs_pub = self.create_publisher(
-            Float32MultiArray, 'blendshape', 10)
+            Float32MultiArray, 'blendshape_robot', 10)
 
         # 当前所有 blendshape 值 (61 个, 默认 0.0)
         self.bs_values: list[float] = [0.0] * _NUM_BLENDSHAPES

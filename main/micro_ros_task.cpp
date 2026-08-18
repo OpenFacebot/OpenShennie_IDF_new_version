@@ -1,5 +1,5 @@
 #include "micro_ros_task.h"
-#include "servo_state_db.h"
+#include "servo_task.h"
 #include "servo_types.h"
 #include "usjt_transport.h"
 
@@ -26,8 +26,6 @@
 // 批量位置消息
 #include <std_msgs/msg/float32_multi_array.h>
 
-static MicroRosTaskParams *g_params;
-
 // ---- ROS2 对象 ----
 static rcl_subscription_t   cmd_sub;
 static rcl_subscription_t   batch_sub;   // 批量位置 subscriber
@@ -42,19 +40,9 @@ static servo_msgs__msg__ServoCommand          cmd_msg;
 static servo_msgs__srv__GetServoInfo_Request   req_msg;
 static servo_msgs__srv__GetServoInfo_Response  res_msg;
 
-// 批量位置消息缓存
+// 批量位置消息缓存 (顺序与 servo_types.h 的 DEFAULT_SERVO_IDS 一致)
 static std_msgs__msg__Float32MultiArray        batch_msg;
 static float batch_data_buf[DEFAULT_SERVO_COUNT];
-
-// 批量舵机 ID 顺序 (与 servo_config.cpp / Python servo_config.py 保持一致)
-static const uint8_t BATCH_SERVO_IDS[DEFAULT_SERVO_COUNT] = {
-     1,  2,  3,  4,  5,  6,  7,  8,
-    13, 14,
-    17, 18, 19,
-    21, 22, 23, 24, 25, 26, 27,
-    33, 34, 35,
-    41, 42, 43
-};
 
 // ============================================================
 //  cmd_callback — 接收上位机 servo_command
@@ -63,17 +51,16 @@ static const uint8_t BATCH_SERVO_IDS[DEFAULT_SERVO_COUNT] = {
 static void cmd_callback(const void *msgin)
 {
     const auto *msg = (const servo_msgs__msg__ServoCommand *)msgin;
-    ServoStateDB *db = g_params->db;
 
     // 急停状态下：只放行恢复指令，其他全忽略
-    if (db->isEmergencyStop() && !(msg->cmd_type == 263 && msg->position != 0))
+    if (servo_is_emergency_stop() && !(msg->cmd_type == 263 && msg->position != 0))
         return;
 
     switch (msg->cmd_type) {
 
-    // ---- 位置控制 (0) : 直写 DB target ----
+    // ---- 位置控制 (0) : 直写 target ----
     case 0:
-        db->setTarget(msg->id, msg->position, msg->time_ms);
+        servo_set_target(msg->id, (uint16_t)msg->position);
         break;
 
     // ---- 扭矩开关 (253) : 入队由 servo_task 执行 ----
@@ -82,13 +69,13 @@ static void cmd_callback(const void *msgin)
         sc.type          = ServoCmdType::SET_TORQUE;
         sc.id            = msg->id;
         sc.torque_enable = (msg->position != 0);
-        db->sendCommand(sc);
+        servo_send_command(sc);
         break;
     }
 
     // ---- 模式切换 (254) : id=1手动, id=0自动 ----
     case 254:
-        db->setManualMode(msg->id != 0);
+        servo_set_manual_mode(msg->id != 0);
         printf("[指令] %s模式\n", msg->id ? "手动" : "自动");
         break;
 
@@ -97,18 +84,18 @@ static void cmd_callback(const void *msgin)
         ServoCommand sc = {};
         sc.type = ServoCmdType::PING;
         sc.id   = msg->id;
-        db->sendCommand(sc);
+        servo_send_command(sc);
         break;
     }
 
     // ---- 急停/恢复 (263) ----
     case 263:
-        db->setEmergencyStop(msg->position == 0);
+        servo_set_emergency_stop(msg->position == 0);
         if (msg->position == 0) {
             ServoCommand sc = {};
             sc.type = ServoCmdType::EMERGENCY_STOP;
             sc.id   = DS_BROADCAST_ID;
-            db->sendCommand(sc);
+            servo_send_command(sc);
             printf("[指令] 紧急停止\n");
         } else {
             printf("[指令] 急停恢复\n");
@@ -122,15 +109,14 @@ static void cmd_callback(const void *msgin)
 
 // ============================================================
 //  batch_callback — 接收批量舵机位置 (Float32MultiArray)
-//  数组顺序与 BATCH_SERVO_IDS 一致，值范围 0–4095
+//  数组顺序与 DEFAULT_SERVO_IDS 一致，值范围 0–4095
 // ============================================================
 
 static void batch_callback(const void *msgin)
 {
     const auto *msg = (const std_msgs__msg__Float32MultiArray *)msgin;
-    ServoStateDB *db = g_params->db;
 
-    if (db->isEmergencyStop()) return;
+    if (servo_is_emergency_stop()) return;
 
     int n = (int)msg->data.size;
     if (n > DEFAULT_SERVO_COUNT) n = DEFAULT_SERVO_COUNT;
@@ -139,7 +125,7 @@ static void batch_callback(const void *msgin)
         int pos = (int)msg->data.data[i];
         if (pos < 0)    pos = 0;
         if (pos > 4095) pos = 4095;
-        db->setTarget(BATCH_SERVO_IDS[i], (uint16_t)pos, 40);
+        servo_set_target(DEFAULT_SERVO_IDS[i], (uint16_t)pos);
     }
 }
 
@@ -153,7 +139,7 @@ static void get_servo_info_callback(const void *req, void *res)
     auto *rsp = (servo_msgs__srv__GetServoInfo_Response *)res;
 
     ServoSnapshot snap[MAX_SERVO_SLOTS + 1];
-    int count = g_params->db->getAllServos(snap, MAX_SERVO_SLOTS + 1);
+    int count = servo_get_all_feedback(snap, MAX_SERVO_SLOTS + 1);
 
     rsp->ids.data          = (uint8_t *)malloc(count * sizeof(uint8_t));
     rsp->positions.data    = (int16_t *)malloc(count * sizeof(int16_t));
@@ -184,7 +170,7 @@ static void get_servo_info_callback(const void *req, void *res)
 
 void micro_ros_task(void *arg)
 {
-    g_params = (MicroRosTaskParams *)arg;
+    (void)arg;
 
     // 1. 设置 USB Serial/JTAG 传输层
     rmw_uros_set_custom_transport(
