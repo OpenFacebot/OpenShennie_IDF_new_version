@@ -1,4 +1,4 @@
-# openShennie — 仿人面部机器人
+# openShennie 
 
 基于 **ESP32-P4 + micro-ROS + ROS2 + OrangePi（Audio2Face 本地推理）** 的仿人面部表情机器人。
 下位机驱动 26 个 DS-S009 智能舵机实现面部表情，上位机通过 ROS2 话题链路下发 blendshape → landmark → 舵机角度，可接入本地模型推流（Audio2Face）或手动 GUI 调试。
