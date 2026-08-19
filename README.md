@@ -1,4 +1,4 @@
-# openShennie — 仿人面部机器人
+# openShennie
 
 基于 **ESP32-P4 + micro-ROS + ROS2 + OrangePi（Audio2Face 本地推理）** 的仿人面部表情机器人。
 下位机驱动 26 个 DS-S009 智能舵机实现面部表情，上位机通过 ROS2 话题链路下发 blendshape → landmark → 舵机角度，可接入本地模型推流（Audio2Face）或手动 GUI 调试。
@@ -8,30 +8,37 @@
 ## 1. 系统架构与数据链路
 
 ```
-┌──────────────────────┐  UDP :9999   ┌───────────────────────────┐
-│  OrangePi 5 Plus     │ ────────────► │  PC (192.168.31.122)      │
-│  Audio2Face RKNN 推理 │  blendshape   │  a2f_ros2_bridge.py       │
-│  (claire / mark 模型) │   61 维       └─────────────┬─────────────┘
-└──────────────────────┘                             │ /blendshape_robot (61 维)
-                                                     ▼
-                                          blendshape2landmark 节点
-                                                     │ /landmark_positions_batch (25 维)
-                                                     ▼
-                                             landmark2angle 节点
-                                                     │ /servo_positions_batch (26 维, 0–4095)
-                                                     ▼
-                                          micro_ros_agent (serial)
-                                                     │ USB Serial/JTAG
-                                                     ▼
-                                           ESP32-P4（节点 esp32_servo）
-                                              micro_ros_task → servo_task
-                                                     │ UART1 @ 1Mbps (TX=GPIO18, RX=GPIO19)
-                                                     ▼
-                                             26 × DS-S009 舵机（30Hz 控制）
+┌── 线路 A：OrangePi 推流 ────────────────────────────────────────────┐
+│  OrangePi 5 Plus          UDP :9999     PC (192.168.31.122)         │
+│  Audio2Face RKNN 推理   ────────────►  a2f_ros2_bridge.py           │
+│  (claire / mark 模型)     61 维 blendshape                           │
+└──────────────────────────────────────────────┬──────────────────────┘
+┌── 线路 B：PC 本机推流 ────────────────────────┤
+│  PC 本机 Audio2Face 推理（GPU/ONNX）          │
+│  → 脚本直接发布 blendshape                   │
+└──────────────────────────────────────────────┤
+                                               ▼ /blendshape_robot (61 维)
+                                     blendshape2landmark 节点
+                                               │ /landmark_positions_batch (25 维)
+                                               ▼
+                                         landmark2angle 节点
+                                               │ /servo_positions_batch (26 维, 0–4095)
+                                               ▼
+                                        micro_ros_agent (serial)
+                                               │ USB Serial/JTAG
+                                               ▼
+                                         ESP32-P4（节点 esp32_servo）
+                                            micro_ros_task → servo_task
+                                               │ UART1 @ 1Mbps (TX=GPIO18, RX=GPIO19)
+                                               ▼
+                                        26 × DS-S009 舵机（30Hz 控制）
 ```
 
 - **PC 端**：micro_ros_agent 桥接 ROS2 网络与 ESP32；`pkg_facebot_controller` 提供转换节点和调试 GUI。
-- **OrangePi 端**：Audio2Face 模型 RKNN 本地推理，UDP 推流到 PC，经 bridge 进入 ROS2。
+- **推流源（二选一，见第 6 节）**：
+  - **线路 A（OrangePi）**：Audio2Face 模型 RKNN 本地推理，UDP 推流到 PC，经 bridge 进入 ROS2
+  - **线路 B（PC 本机）**：PC 上直接跑 Audio2Face 推理，脚本直接发布 `/blendshape_robot`
+  - 两条线路共用下游全部链路，**同一时间只跑一条**；调试时 GUI 也能直接发 `/blendshape_robot`
 - **ESP32 端**：FreeRTOS 双任务 — `servo_task`（30Hz 舵机控制，EMA 平滑 + 同步写）与 `micro_ros_task`（micro-ROS 通信）。
 
 ---
@@ -81,7 +88,7 @@
 
 ### 4.1 环境要求
 
-- ESP-IDF **v5.1+**（支持 ESP32-P4），并已配置 `idf.py` 环境
+- ESP-IDF **v5.4.4**（支持 ESP32-P4），并已配置 `idf.py` 环境
 - 依赖组件由 IDF 组件管理器自动拉取（`esp_wifi_remote`、`esp_hosted` 等）
 
 ### 4.2 编译与烧录
@@ -143,21 +150,19 @@ colcon build                    # 或只编控制包: colcon build --packages-se
 ### 5.2 启动 micro-ROS Agent（先启动！）
 
 ```bash
-# Windows：COMx 在设备管理器中查看（USB Serial/JTAG 对应的端口）
-ros2 run micro_ros_agent micro_ros_agent serial --dev COM9
+# Linux（Docker，实际使用）：--dev 换成实际的 USB Serial/JTAG 端口
+sudo docker run -it --rm --privileged --net=host -v /dev:/dev \
+    microros/micro-ros-agent:humble serial --dev /dev/ttyACM1 -b 921600
 
-# Linux：
-ros2 run micro_ros_agent micro_ros_agent serial --dev /dev/ttyACM0
-```
 
-> USB Serial/JTAG 为虚拟串口，波特率参数无实际影响（如无必要不加 `-b`）。
+> USB Serial/JTAG 为虚拟串口，波特率参数实际影响很小（此处统一 `-b 921600`）。
 > 连接成功后日志出现 `session established`，且 ESP32 侧打印 `[通信] 已连接到上位机`。
 
 ### 5.3 话题总览
 
 | 话题 | 类型 | 方向 | 内容 |
 |---|---|---|---|
-| `/blendshape_robot` | Float32MultiArray | PC 内 / 模型推流 → | 61 维 ARKit blendshape（0–1） |
+| `/blendshape_robot` | Float32MultiArray | 推流源（线路 A/B 或 GUI）→ | 61 维 ARKit blendshape（0–1） |
 | `/landmark_positions_batch` | Float32MultiArray | PC 内 | 25 维 landmark 参数 p |
 | `/servo_positions_batch` | Float32MultiArray | PC → ESP32 | **26 维舵机位置（0–4095），顺序与第 3 节 ID 表一致** |
 | `/servo_command` | servo_msgs/msg/ServoCommand | PC → ESP32 | 单舵机/整机指令（见 5.5） |
@@ -218,29 +223,32 @@ ros2 service call /get_servo_info servo_msgs/srv/GetServoInfo "{}"
 
 ---
 
-## 6. OrangePi 模型推流（Audio2Face）
+## 6. 推流线路（二选一）
+
+两条线路在 `/blendshape_robot` 汇合，下游链路完全一致。**同一时间只跑一条**（都跑会互相覆盖表情数据）。
+都需要打开blendshape2landmark以及landmark2angle节点
+
+### 6.1 线路 A：OrangePi 推流（RKNN 板端推理）
 
 > 设备：OrangePi 5 Plus，IP `192.168.31.151`，RKNPU 0.9.8，模型文件清单详见 `_doc/orangepi_model_deployment.md`
 
-### 6.1 连接方式
+**连接方式**：
 
 ```bash
 adb connect 192.168.31.151:5555     # adb shell 为 root，正常用户 orangepi
 ```
 
-### 6.2 模型与脚本（均位于 `~` 即 `/home/orangepi`）
+**模型与脚本**（均位于 `~` 即 `/home/orangepi`）：
 
 | 文件 | 说明 |
 |---|---|
 | `a2f_sender_claire.py` | **claire 模型 UDP 推流**（25 FPS 目标，实测 ~18Hz，推流脚本主用） |
-| `a2f_sender_mark.py` | mark 优化模型推流（INT8，30 FPS 目标） |
-| `a2f_engine_rknn.py` | mark 模型推理引擎（3 核 NPU 并行，最高 ~55 FPS） |
 | `run_infer.py` | 单次推理自测 |
 | `bench_a2f.py` 等 | NPU 性能测试 |
 | `audio2face_claire.rknn` / `audio2face_v2.rknn` | claire / mark 模型权重 |
 | `postproc_claire.npz` / `postproc_optimized.npz` | 后处理矩阵 |
 
-### 6.3 启动推流
+**启动推流**：
 
 ```bash
 # 方式一：手动（推荐，便于看日志）
@@ -251,8 +259,23 @@ cd /home/orangepi && python3 a2f_sender_claire.py
 sudo systemctl start a2f-stream
 ```
 
-推流路径：板子 UDP → PC `192.168.31.122:9999` → PC 上 `a2f_ros2_bridge.py` → ROS2 话题 `/blendshape_robot`（61 维）。
-即推流前需保证 PC 端 bridge 与 5.4 的转换节点已运行。
+**PC 端配套**：需先启动 `a2f_ros2_bridge.py`（收 UDP :9999 → 发布 `/blendshape_robot`）：
+
+```bash
+python3 /home/laid/a2f_ros2_bridge.py    # PC (192.168.31.122) 上运行
+```
+
+### 6.2 线路 B：PC 本机推流
+
+不经过 OrangePi 和 UDP，PC 上直接跑 Audio2Face 推理，脚本直接发布 `/blendshape_robot`（61 维）：
+
+
+
+### 6.3 线路切换
+
+- 停掉当前线路的推流脚本（或 OrangePi 上 `Ctrl+C`），再启动另一条即可
+- 下游（blendshape2landmark → landmark2angle → agent → ESP32）不用重启
+- 切换后表情源立即变更，无需任何重新连接操作
 
 ---
 
@@ -261,8 +284,10 @@ sudo systemctl start a2f-stream
 1. **硬件准备**：ESP32-P4 烧录固件、舵机总线接 UART1、给舵机上电；观察串口日志直到 `全部就绪`（波特率被修改时先给舵机断电重启一次）
 2. **PC**：启动 micro-ROS Agent（5.2），确认 ESP32 打印 `[通信] 已连接到上位机`
 3. **PC**：启动 `blendshape2landmark` 与 `landmark2angle`（5.4）
-4. **冒烟测试**：开 `controller_angle_GUI` 拖动滑块，确认舵机动作；`ros2 service call /get_servo_info ...` 确认反馈正常
-5. **接模型**：PC 启动 `a2f_ros2_bridge.py`，OrangePi 启动推流脚本（6.3），表情即可动起来
+4. **冒烟测试**：开 `controller_blendshape_GUI` 拖动滑块，确认舵机动作；`ros2 service call /get_servo_info ...` 确认反馈正常
+5. **接推流（二选一）**：
+   - **线路 A（OrangePi）**：PC 启动 `a2f_ros2_bridge.py`，OrangePi 启动推流脚本（6.1）
+   - **线路 B（PC 本机）**：直接运行 PC 推理发布脚本（6.2）
 6. **急停演练**：发 `cmd_type 263, position 0` 确认全机扭矩关闭，再发 `position 1` 恢复
 
 ---
