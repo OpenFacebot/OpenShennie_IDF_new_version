@@ -147,6 +147,28 @@ colcon build                    # 或只编控制包: colcon build --packages-se
 - **Windows cmd**：`call install\setup.bat`
 - **Linux**：`source install/setup.bash`
 
+> 💡 **一键加载（Linux，推荐）**：`source install/setup.bash` 只加载了本工作空间，还需先加载 ROS 2 基础环境。把下面两步合并成一个别名 `ros2_on`，加入 `~/.bashrc`，之后每次开终端只需输入 `ros2_on` 即可。
+
+`ros2_on` 包含的指令：
+
+```bash
+# 1) 激活 ROS 2 基础环境（此处以 Humble 为例，路径按你的实际安装调整）
+source /opt/ros/humble/setup.bash
+
+# 2) 激活本仓库工作空间（<WORKSPACE> 换成你 clone 本仓库的实际绝对路径）
+source <WORKSPACE>/ros2_ws/install/setup.bash
+```
+//用上两个指令即可加载ros2环境
+写成别名（第三行 `echo` 只是打印确认信息，可省略）：
+
+```bash
+alias ros2_on='source /opt/ros/humble/setup.bash \
+  && source <WORKSPACE>/ros2_ws/install/setup.bash \
+  && echo "✅ ROS 2 Humble 已激活 | DISTRO: $ROS_DISTRO | VERSION: $ROS_VERSION"'
+```
+
+> 修改 `~/.bashrc` 后执行 `source ~/.bashrc`（或新开终端）生效；`<WORKSPACE>` 请替换为你自己的仓库路径，勿直接照抄他人绝对路径。
+
 ### 5.2 启动 micro-ROS Agent（先启动！）
 
 ```bash

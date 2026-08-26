@@ -132,25 +132,25 @@
         "19": {
             "name": "MouthFunnel",
             "name_cn": "嘴唇漏斗形",
-            "scale": 0.8,
+            "scale": 1.5,
             "deltas": {"18": -30.0, "25": 0.5, "26": 1.0, "27": 1.0, "21": 10.0, "23":10.0}
         },
         "20": {
             "name": "MouthPucker",
             "name_cn": "嘴唇撅起",
-            "scale": 0.8,
+            "scale": 1.5,
             "deltas": {"25": 0.5, "26": 0.0,"21": 8.0, "23": 8.0 ,"22":8.0, "24":8.0, "27":1.0}
         },
         "21": {
             "name": "MouthLeft",
             "name_cn": "嘴左移",
-            "scale": 0,
+            "scale": 1.0,
             "deltas": {"23": -10.0}
         },
         "22": {
             "name": "MouthRight",
             "name_cn": "嘴右移",
-            "scale": 0,
+            "scale": 1.0,
             "deltas": { "21": -10.0}
         },
         "23": {
@@ -193,13 +193,13 @@
         "29": {
             "name": "MouthStretchLeft",
             "name_cn": "左拉伸",
-            "scale": 0,
+            "scale": 1.0,
             "deltas": {"24": -10.0, "23": -4.0 }
         },
         "30": {
             "name": "MouthStretchRight",
             "name_cn": "右拉伸",
-            "scale": 0,
+            "scale": 1.0,
             "deltas": {"22": -10.0, "21": -4.0}
         }
     ,
