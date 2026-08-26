@@ -159,6 +159,9 @@ source /opt/ros/humble/setup.bash
 source <WORKSPACE>/ros2_ws/install/setup.bash
 ```
 //用上两个指令即可加载ros2环境
+
+
+
 写成别名（第三行 `echo` 只是打印确认信息，可省略）：
 
 ```bash
